@@ -54,7 +54,7 @@ module.exports.postCharacter = async(req, res, next) => {
             weight,
         })
         if (req.body.videoId) {
-            let videoIds = req.body.videoId
+            let videoIds = req.body.movies
             for (let id of videoIds) {
                 let movieFounded = await video.model.findByPk(id)
                 await movieFounded.addCharacter(newCharacter)
@@ -97,8 +97,15 @@ module.exports.updateCharacter = async(req, res, next) => {
         const { characterId } = req.params
         const { img, name, age, history, weight } = req.body
         const characterUpdated = await model.update({ img, name, age, history, weight }, { where: { id: characterId } })
-
+        const character = await model.findByPk(characterId)
+        let movies = []
+        if (req.body.movies) {
+            for (let movie of req.body.movies) {
+                movies.push(await video.model.findByPk(movie))
+            }
+        }
+        character.setVideos(movies)
         if (characterUpdated[0] !== 0) return res.json({ message: "Character updated" })
         res.json({ message: "You need a valid id" })
-    } catch (err) { res.status(400).json({ err }) }
+    } catch (err) { res.status(400).json({ err: err.message }) }
 }
