@@ -1,6 +1,7 @@
 const { model } = require('./model')
 const { Op } = require('sequelize')
 const video = require("../movie")
+const { character } = require('../db')
 require('../db/asociations')
 
 module.exports.getCharacters = async(req, res, next) => {
@@ -53,7 +54,6 @@ module.exports.postCharacter = async(req, res, next) => {
         }
         res.status(201).json(newCharacter)
     } catch (err) {
-        console.log(err)
         res.status(400).json({ err })
     }
 }
@@ -68,10 +68,11 @@ module.exports.getCharacter = async(req, res, next) => {
                 ["age", "Edad"],
                 ["weight", "Peso"],
                 ["history", "Historia"],
-            ]
+            ],
+            include: video.model
         })
         res.json(characterFounded)
-    } catch (err) { res.status(400).json({ err }) }
+    } catch (err) { res.status(400).json({ err: err.message }) }
 
 }
 
