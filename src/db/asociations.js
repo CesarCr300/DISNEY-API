@@ -9,5 +9,5 @@ video.belongsToMany(character, { through: "video_characters" })
 
 //Relation M to Many videos an gender
 
-// gender.belongsToMany(video, { through: "video_gender" })
-// video.belongsToMany(gender, { through: "video_gender" })
+gender.belongsToMany(video, { through: "video_gender" })
+video.belongsToMany(gender, { through: "video_gender" })

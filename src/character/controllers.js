@@ -53,7 +53,7 @@ module.exports.postCharacter = async(req, res, next) => {
             history,
             weight,
         })
-        if (req.body.videoId) {
+        if (req.body.movies) {
             let videoIds = req.body.movies
             for (let id of videoIds) {
                 let movieFounded = await video.model.findByPk(id)
