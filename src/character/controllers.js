@@ -1,21 +1,29 @@
 const { model } = require('./model')
+const { Op } = require('sequelize')
 
 module.exports.getCharacters = async(req, res, next) => {
-    const { name, age, movies, weight } = req.query
-    const queryData = { name, age, movies, weight }
+    let { name, age, movies, weight } = req.query
+    const queryData = { age, movies, weight }
     let whereValues = {}
+    if (name === undefined || name === null) {
+        name = ""
+    }
     for (let data in queryData) {
         if (queryData[data] !== undefined) {
             whereValues[data] = queryData[data]
         }
     }
-    console.log(whereValues)
     const characters = await model.findAll({
         attributes: [
             ["img", "Imagen"],
             ["name", "Nombre"]
         ],
-        where: whereValues
+        where: {
+            name: {
+                [Op.startsWith]: name
+            },
+            ...whereValues
+        }
     })
     res.json(characters)
 }
