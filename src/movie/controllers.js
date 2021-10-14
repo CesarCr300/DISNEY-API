@@ -23,6 +23,12 @@ module.exports.postMovie = async(req, res, next) => {
         const { img, title, calification, creationDate } = req.body
         console.log(title)
         const newMovie = await model.create({ img, title, calification, creationDate })
+        if (req.body.characters) {
+            for (let characterId of req.body.characters) {
+                let characterFounded = await character.model.findByPk(characterId)
+                newMovie.addCharacter(characterFounded)
+            }
+        }
         res.status(201).json(newMovie)
     } catch (err) {
         res.status(400).json({ err })
