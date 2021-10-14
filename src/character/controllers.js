@@ -1,16 +1,23 @@
 const { model } = require('./model')
 const { Op } = require('sequelize')
 const video = require("../movie")
-const { character } = require('../db')
 require('../db/asociations')
 
 module.exports.getCharacters = async(req, res, next) => {
     try {
         let { name, age, movies, weight } = req.query
-        const queryData = { age, movies, weight }
+        const queryData = { age, weight }
         let whereValues = {}
         if (name === undefined || name === null) {
             name = ""
+        }
+        let includeSearchByMovie = []
+        if (movies !== undefined && movies !== null) {
+            includeSearchByMovie = [{
+                model: video.model,
+                where: { id: movies },
+                attributes: []
+            }]
         }
         for (let data in queryData) {
             if (queryData[data] !== undefined) {
@@ -27,7 +34,8 @@ module.exports.getCharacters = async(req, res, next) => {
                     [Op.startsWith]: name
                 },
                 ...whereValues
-            }
+            },
+            include: includeSearchByMovie
         })
         res.json(characters)
     } catch (err) {

@@ -2,6 +2,7 @@ const Sequelize = require('sequelize')
 const { sequelize } = require("../index")
 
 module.exports.video = sequelize.define('videos', {
+    timestamps: false,
     img: {
         type: Sequelize.STRING,
         defaultValue: ''
