@@ -1,4 +1,5 @@
 const { model } = require('./model')
+const character = require("../character/model")
 
 module.exports.getMovies = async(req, res, next) => {
     const movies = await model.findAll({ attributes: ["img", "title", "creationDate"] })
@@ -8,7 +9,9 @@ module.exports.getMovies = async(req, res, next) => {
 module.exports.getMovie = async(req, res, next) => {
     try {
         const { movieId } = req.params
-        const movieFounded = await model.findByPk(movieId)
+        const movieFounded = await model.findByPk(movieId, {
+            include: character.model
+        })
         res.json(movieFounded)
     } catch (err) {
         res.status(400).json({ err })

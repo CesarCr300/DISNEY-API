@@ -62,7 +62,7 @@ module.exports.postCharacter = async(req, res, next) => {
         }
         res.status(201).json(newCharacter)
     } catch (err) {
-        res.status(400).json({ err })
+        res.status(400).json({ err: err.message })
     }
 }
 
