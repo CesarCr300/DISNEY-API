@@ -42,9 +42,7 @@ module.exports.postCharacter = async(req, res, next) => {
 
 module.exports.getCharacter = async(req, res, next) => {
     const { characterId } = req.params
-    const characterFounded = await model.findAll({
-        where: { id: characterId },
-        limit: 1,
+    const characterFounded = await model.findByPk(characterId, {
         attributes: [
             ["img", "Imagen"],
             ["name", "Nombre"],
@@ -53,7 +51,7 @@ module.exports.getCharacter = async(req, res, next) => {
             ["history", "Historia"],
         ]
     })
-    res.json(characterFounded[0])
+    res.json(characterFounded)
 }
 
 module.exports.deleteCharacter = async(req, res, next) => {
