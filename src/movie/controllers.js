@@ -6,8 +6,17 @@ const character = require("../character/model")
 
 module.exports.getMovies = async(req, res, next) => {
     try {
-        let { name, gender, order } = req.query
+        let { name, genre, order } = req.query
         if (!name) name = ''
+
+        let includeSearchByGender = []
+        if (genre) {
+            includeSearchByGender = [{
+                model: gender,
+                where: { id: genre },
+                attributes: []
+            }]
+        }
         let orderValues = []
         if (order === 'ASC' || order === 'DESC') {
             orderValues = [
@@ -25,6 +34,7 @@ module.exports.getMovies = async(req, res, next) => {
                     [Op.startsWith]: name
                 }
             },
+            include: includeSearchByGender,
             order: orderValues
         })
         res.json(movies)
@@ -47,8 +57,6 @@ module.exports.getMovie = async(req, res, next) => {
 
 module.exports.postMovie = async(req, res, next) => {
     try {
-        console.log("gender", gender)
-        console.log("model", model)
         const { img, title, calification, creationDate } = req.body
         const newMovie = await model.create({ img, title, calification, creationDate })
         if (req.body.genders) {
@@ -75,14 +83,17 @@ module.exports.updateMovie = async(req, res, next) => {
         const { img, title, calification, creationDate } = req.body
 
         await model.update({ img, title, calification, creationDate }, { where: { id: movieId } })
+
         const movieFounded = await model.findByPk(movieId)
+
         if (req.body.genders) {
             let gendersList = []
             for (let id of req.body.genders) {
                 gendersList.push(await gender.findByPk(id))
             }
-            movieFounded.setGender(gendersList)
+            movieFounded.setGenders(gendersList)
         }
+
         if (req.body.characters) {
             let characters = []
             for (let characterId of req.body.characters) {
@@ -91,6 +102,7 @@ module.exports.updateMovie = async(req, res, next) => {
             }
             movieFounded.setCharacters(characters)
         }
+
         res.json({ message: "Movie/Serie updated" })
     } catch (err) {
         res.status(400).json({ err: err.message })
