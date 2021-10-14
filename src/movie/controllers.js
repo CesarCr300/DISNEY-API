@@ -1,6 +1,8 @@
 const { model } = require('./model')
 const { Op } = require('sequelize')
+const { gender } = require('../db')
 const character = require("../character/model")
+
 
 module.exports.getMovies = async(req, res, next) => {
     try {
@@ -45,8 +47,16 @@ module.exports.getMovie = async(req, res, next) => {
 
 module.exports.postMovie = async(req, res, next) => {
     try {
+        console.log("gender", gender)
+        console.log("model", model)
         const { img, title, calification, creationDate } = req.body
         const newMovie = await model.create({ img, title, calification, creationDate })
+        if (req.body.genders) {
+            for (let id of req.body.genders) {
+                const genderFounded = await gender.findByPk(id)
+                genderFounded.addVideo(newMovie)
+            }
+        }
         if (req.body.characters) {
             for (let characterId of req.body.characters) {
                 let characterFounded = await character.model.findByPk(characterId)
@@ -66,6 +76,13 @@ module.exports.updateMovie = async(req, res, next) => {
 
         await model.update({ img, title, calification, creationDate }, { where: { id: movieId } })
         const movieFounded = await model.findByPk(movieId)
+        if (req.body.genders) {
+            let gendersList = []
+            for (let id of req.body.genders) {
+                gendersList.push(await gender.findByPk(id))
+            }
+            movieFounded.setGender(gendersList)
+        }
         if (req.body.characters) {
             let characters = []
             for (let characterId of req.body.characters) {

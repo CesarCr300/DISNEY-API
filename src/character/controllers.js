@@ -1,7 +1,6 @@
 const { model } = require('./model')
 const { Op } = require('sequelize')
 const video = require("../movie")
-require('../db/asociations')
 
 module.exports.getCharacters = async(req, res, next) => {
     try {

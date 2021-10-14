@@ -6,6 +6,7 @@ module.exports.gender = sequelize.define('genders', {
     name: {
         type: Sequelize.TEXT,
         allowNull: false,
+        unique: true,
         validate: {
             notNull: {
                 msg: "El género debe tener un nombre"
