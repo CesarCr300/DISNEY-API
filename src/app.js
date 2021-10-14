@@ -8,6 +8,6 @@ app.use(express.urlencoded({ extended: true }))
 
 app.set("port", process.env.PORT || 3000);
 
-app.use(characters.router)
+app.use("/characters", characters.router)
 
 module.exports = app

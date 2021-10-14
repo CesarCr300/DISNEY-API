@@ -3,20 +3,23 @@ const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: './database.sqlite'
 })
+module.exports.sequelize = sequelize
 
-const Character = sequelize.define('characters', { img: Sequelize.STRING, name: Sequelize.TEXT, age: Sequelize.INTEGER, history: Sequelize.TEXT, weight: Sequelize.FLOAT })
+const { character } = require("./models/character")
 
 //formate dateonly month/day/year
 
-const Video = sequelize.define('videos', { img: Sequelize.STRING, title: Sequelize.TEXT, calification: Sequelize.INTEGER, creationDate: Sequelize.DATEONLY })
-sequelize.sync()
-    .then(() => {
-        console.log(`Database & tables created!`)
-    })
+const { video } = require("./models/video")
+
 
 module.exports.connectionDB = function() {
+    require("./asociations")
+    sequelize.sync({ force: false })
+        .then(() => {
+            console.log(`Database & tables created!`)
+        })
     sequelize.authenticate().then((d) => { console.log("DB Connected") }).catch(console.error)
 }
 
-module.exports.character = Character
-module.exports.video = Video
+module.exports.character = character
+module.exports.video = video
