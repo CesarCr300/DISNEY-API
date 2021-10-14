@@ -12,6 +12,7 @@ const { character } = require("./models/character")
     //formate dateonly month/day/year
 const { video } = require("./models/video")
 const { gender } = require("./models/gender")
+const { user } = require("./models/user")
 
 module.exports.connectionDB = async function() {
     try {
@@ -26,11 +27,10 @@ module.exports.connectionDB = async function() {
         await gender.create({ name: "infantil" })
         await gender.create({ name: "comedia" })
         await gender.create({ name: "animacion" })
-    } catch (err) {
-
-    }
+    } catch (err) {}
 }
 
 module.exports.gender = gender
 module.exports.character = character
 module.exports.video = video
+module.exports.user = user

@@ -2,7 +2,6 @@ const Sequelize = require('sequelize')
 const { sequelize } = require('../index')
 
 module.exports.character = sequelize.define('characters', {
-    timestamps: false,
     img: {
         type: Sequelize.STRING,
     },
