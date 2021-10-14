@@ -2,8 +2,12 @@ const { model } = require('./model')
 const character = require("../character/model")
 
 module.exports.getMovies = async(req, res, next) => {
-    const movies = await model.findAll({ attributes: ["img", "title", "creationDate"] })
-    res.json(movies)
+    try {
+        const movies = await model.findAll({ attributes: ["img", "title", "creationDate"] })
+        res.json(movies)
+    } catch (err) {
+        res.status(400).json({ err: err.message })
+    }
 }
 
 module.exports.getMovie = async(req, res, next) => {
@@ -14,7 +18,7 @@ module.exports.getMovie = async(req, res, next) => {
         })
         res.json(movieFounded)
     } catch (err) {
-        res.status(400).json({ err })
+        res.status(400).json({ err: err.message })
     }
 }
 
@@ -31,7 +35,7 @@ module.exports.postMovie = async(req, res, next) => {
         }
         res.status(201).json(newMovie)
     } catch (err) {
-        res.status(400).json({ err })
+        res.status(400).json({ err: err.message })
     }
 }
 
@@ -41,9 +45,18 @@ module.exports.updateMovie = async(req, res, next) => {
         const { img, title, calification, creationDate } = req.body
 
         await model.update({ img, title, calification, creationDate }, { where: { id: movieId } })
-        res.json({ message: "Movie/Serie deleted" })
+        const movieFounded = await model.findByPk(movieId)
+        if (req.body.characters) {
+            let characters = []
+            for (let characterId of req.body.characters) {
+                let characterFounded = await character.model.findByPk(characterId)
+                characters.push(characterFounded)
+            }
+            movieFounded.setCharacters(characters)
+        }
+        res.json({ message: "Movie/Serie updated" })
     } catch (err) {
-        res.status(400).json({ err })
+        res.status(400).json({ err: err.message })
     }
 }
 
@@ -53,6 +66,6 @@ module.exports.deleteMovie = async(req, res, next) => {
         await model.destroy({ where: { id: movieId } })
         res.json({ message: "Movie/Serie deleted" })
     } catch (err) {
-        res.status(400).json({ err })
+        res.status(400).json({ err: err.message })
     }
 }
