@@ -1,9 +1,30 @@
 const { model } = require('./model')
+const { Op } = require('sequelize')
 const character = require("../character/model")
 
 module.exports.getMovies = async(req, res, next) => {
     try {
-        const movies = await model.findAll({ attributes: ["img", "title", "creationDate"] })
+        let { name, gender, order } = req.query
+        if (!name) name = ''
+        let orderValues = []
+        if (order === 'ASC' || order === 'DESC') {
+            orderValues = [
+                ["creationDate", order]
+            ]
+        }
+        const movies = await model.findAll({
+            attributes: [
+                ["img", "Imagen"],
+                ["title", "Título"],
+                ["creationDate", "Fecha de creación"]
+            ],
+            where: {
+                title: {
+                    [Op.startsWith]: name
+                }
+            },
+            order: orderValues
+        })
         res.json(movies)
     } catch (err) {
         res.status(400).json({ err: err.message })
@@ -25,7 +46,6 @@ module.exports.getMovie = async(req, res, next) => {
 module.exports.postMovie = async(req, res, next) => {
     try {
         const { img, title, calification, creationDate } = req.body
-        console.log(title)
         const newMovie = await model.create({ img, title, calification, creationDate })
         if (req.body.characters) {
             for (let characterId of req.body.characters) {
