@@ -1,5 +1,7 @@
 const { model } = require('./model')
 const { Op } = require('sequelize')
+const video = require("../movie")
+require('../db/asociations')
 
 module.exports.getCharacters = async(req, res, next) => {
     try {
@@ -42,8 +44,16 @@ module.exports.postCharacter = async(req, res, next) => {
             history,
             weight,
         })
+        if (req.body.videoId) {
+            let videoIds = req.body.videoId
+            for (let id of videoIds) {
+                let movieFounded = await video.model.findByPk(id)
+                await movieFounded.addCharacter(newCharacter)
+            }
+        }
         res.status(201).json(newCharacter)
     } catch (err) {
+        console.log(err)
         res.status(400).json({ err })
     }
 }

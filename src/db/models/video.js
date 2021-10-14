@@ -22,7 +22,7 @@ module.exports.video = sequelize.define('videos', {
                 args: 1,
                 msg: "La calificación debe ser mayor que 0"
             },
-            man: {
+            max: {
                 args: 5,
                 msg: "La calificación debe ser menor que 6"
             }
