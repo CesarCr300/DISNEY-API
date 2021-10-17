@@ -1,10 +1,7 @@
-const { register } = require('./controllers')
+const { register, login } = require('./controllers')
 const router = require('express').Router()
 
 router.get("/register", register)
-
-router.get("/", async(req, res) => {
-    res.send("User")
-})
+router.get("/login", login)
 
 module.exports.router = router
