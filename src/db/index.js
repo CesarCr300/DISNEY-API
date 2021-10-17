@@ -9,7 +9,6 @@ const sequelize = new Sequelize({
 module.exports.sequelize = sequelize
 
 const { character } = require("./models/character")
-    //formate dateonly month/day/year
 const { video } = require("./models/video")
 const { gender } = require("./models/gender")
 const { user } = require("./models/user")
@@ -17,7 +16,7 @@ const { user } = require("./models/user")
 module.exports.connectionDB = async function() {
     try {
         require("./asociations")
-        await sequelize.sync({ force: false })
+        await sequelize.sync({ force: true })
             .then(() => {
                 console.log(`Database & tables created!`)
             })
