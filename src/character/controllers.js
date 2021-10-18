@@ -86,7 +86,8 @@ module.exports.getCharacter = async(req, res, next) => {
 module.exports.deleteCharacter = async(req, res, next) => {
     try {
         const { characterId } = req.params
-        await model.destroy({ where: { id: characterId } })
+        const deletedCharacter = await model.destroy({ where: { id: characterId } })
+        if (deletedCharacter === 0) return res.status(400).json({ "err": "Ingrese un characterId valido" })
         res.send({ message: "Character deleted" })
     } catch (err) { res.status(400).json({ err }) }
 }
@@ -96,7 +97,9 @@ module.exports.updateCharacter = async(req, res, next) => {
         const { characterId } = req.params
         const { img, name, age, history, weight } = req.body
         const characterUpdated = await model.update({ img, name, age, history, weight }, { where: { id: characterId } })
+        if (characterUpdated === 0) return res.status(400).json({ err: "Ingrese un characterId válido" })
         const character = await model.findByPk(characterId)
+        if (!character) return res.status(400).json({ err: "Ingrese un characterId válido" })
         let movies = []
         if (req.body.movies) {
             for (let movie of req.body.movies) {

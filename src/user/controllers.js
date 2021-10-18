@@ -33,11 +33,11 @@ module.exports.login = async(req, res, next) => {
         const userFounded = await user.findOne({ where: { email } })
         if (userFounded) {
             const isUser = bcrypt.compareSync(password, userFounded.password)
-            if (!isUser) return res.status(401).json({ err: "Debes ser un usuario" })
-            const token = jwt.sign({ id: userFounded._id }, TOKEN_JWT)
+            if (!isUser) return res.status(401).json({ err: "Email o contraseña invalidos" })
+            const token = jwt.sign({ id: userFounded.id }, TOKEN_JWT)
             return res.json({ token })
         }
-        return res.status(400).json({ err: "Ingresa un usuario existente" })
+        return res.status(400).json({ err: "Email o contraseña invalidos" })
 
     } catch (err) {
         res.status(400).json({ err: err.message })

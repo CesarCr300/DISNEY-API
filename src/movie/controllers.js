@@ -82,10 +82,13 @@ module.exports.updateMovie = async(req, res, next) => {
         const { movieId } = req.params
         const { img, title, calification, creationDate } = req.body
 
-        await model.update({ img, title, calification, creationDate }, { where: { id: movieId } })
+        const updatedMovie = await model.update({ img, title, calification, creationDate }, { where: { id: movieId } })
+
+        if (updatedMovie === 0) return res.status(404).json({ err: "Ingrese un movieId válido" })
 
         const movieFounded = await model.findByPk(movieId)
 
+        if (!movieFounded) return res.status(404).json({ err: "Ingrese un movieId válido" })
         if (req.body.genders) {
             let gendersList = []
             for (let id of req.body.genders) {
@@ -112,7 +115,8 @@ module.exports.updateMovie = async(req, res, next) => {
 module.exports.deleteMovie = async(req, res, next) => {
     try {
         const { movieId } = req.params
-        await model.destroy({ where: { id: movieId } })
+        const movieDeleted = await model.destroy({ where: { id: movieId } })
+        if (movieDeleted === 0) return res.status(404).json({ err: "Ingrese un movieId válido" })
         res.json({ message: "Movie/Serie deleted" })
     } catch (err) {
         res.status(400).json({ err: err.message })
