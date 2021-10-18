@@ -51,6 +51,33 @@ describe('/characters', function() {
         expect(response.body[0].Nombre).toBe("Phineas")
     })
 })
+describe('POST /characters', function() {
+    test('without a token', async() => {
+        const response = await request(app).post('/characters')
+        expect(response.status).toBe(400)
+        expect(response.body.err).toBe('Necesitas un token')
+    })
+    test('without a title', async() => {
+        const response = await request(app).post('/characters').set("access-token", token)
+        expect(response.status).toBe(400)
+        expect(response.body.err).toBe('notNull Violation: El nombre no puede ser nulo')
+    })
+    test("with a title", async() => {
+        const response = await request(app).post('/characters').set("access-token", token).send({ name: "Clifford" })
+        expect(response.body.name).toBe('Clifford')
+        expect(response.status).toBe(201)
+    })
+    test("with a movie", async() => {
+        const response = await request(app).post('/characters').set("access-token", token).send({ name: "Isabella", movies: [1] })
+
+        const isabella = await request(app).get('/characters/6').set('access-token', token)
+
+        expect(isabella.body.videos.length).toBe(1)
+        expect(isabella.body.videos[0].title).toBe('Phineas y Ferb')
+        expect(response.body.name).toBe('Isabella')
+        expect(response.status).toBe(201)
+    })
+})
 
 describe('/characters/characterId', function() {
     test('with a incorrect id', async() => {
