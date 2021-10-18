@@ -8,7 +8,7 @@ module.exports.register = async(req, res, next) => {
         let { email, password } = req.body
         password = await bcrypt.hashSync(password, 8)
         const userCreated = await user.create({ email, password })
-        const token = jwt.sign({ id: userCreated._id }, TOKEN_JWT)
+        const token = jwt.sign({ id: userCreated.id }, TOKEN_JWT)
         res.status(201).json({ token })
     } catch (err) {
         res.status(400).json({ err: err.message })

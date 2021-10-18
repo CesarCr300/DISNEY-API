@@ -1,6 +1,10 @@
 const { getMovies, postMovie, getMovie, updateMovie, deleteMovie } = require('./controllers')
 
+const { isUser } = require("../user")
+
 const router = require('express').Router()
+
+router.use(isUser)
 
 router.route("/")
     .get(getMovies)
