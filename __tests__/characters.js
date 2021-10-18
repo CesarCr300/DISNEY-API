@@ -94,3 +94,32 @@ describe('/characters/characterId', function() {
         expect(response.body.videos[0].title).toBe("Phineas y Ferb")
     })
 })
+
+describe('PATCH /character/characterId', function() {
+    test('without a token', async() => {
+        const response = await request(app).patch('/characters/1')
+        expect(response.status).toBe(400)
+        expect(response.body.err).toBe('Necesitas un token')
+    })
+    test('with a incorrect id', async() => {
+        const response = await request(app).patch('/characters/f').set('access-token', token)
+        expect(response.status).toBe(400)
+        expect(response.body.err).toBe("Ingrese un characterId válido")
+    })
+    test('with a valid id', async() => {
+        const response = await request(app).patch('/characters/1').set('access-token', token).set('access-token', token).send({
+            name: "Phineas 2",
+            age: 18,
+            history: "He is the main character",
+            weight: 80,
+            videos: [1]
+        })
+        expect(response.status).toBe(200)
+        expect(response.body.message).toBe('Character updated')
+
+        const phineas2 = await request(app).get('/characters/1').set('access-token', token)
+        expect(phineas2.body.Nombre).toBe('Phineas 2')
+        expect(phineas2.body.Edad).toBe(18)
+        expect(phineas2.body.Peso).toBe(80)
+    })
+})
