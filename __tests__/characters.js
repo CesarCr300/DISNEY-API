@@ -115,11 +115,33 @@ describe('PATCH /character/characterId', function() {
             videos: [1]
         })
         expect(response.status).toBe(200)
-        expect(response.body.message).toBe('Character updated')
+        expect(response.body.message).toBe('Personaje actualizado')
 
         const phineas2 = await request(app).get('/characters/1').set('access-token', token)
         expect(phineas2.body.Nombre).toBe('Phineas 2')
         expect(phineas2.body.Edad).toBe(18)
         expect(phineas2.body.Peso).toBe(80)
+    })
+})
+
+describe('DELETE /character/characterId', function() {
+    test('without a token', async() => {
+        const response = await request(app).delete('/characters/1')
+        expect(response.status).toBe(400)
+        expect(response.body.err).toBe('Necesitas un token')
+    })
+    test('with a incorrect id', async() => {
+        const response = await request(app).delete('/characters/f').set('access-token', token)
+        expect(response.status).toBe(400)
+        expect(response.body.err).toBe("Ingrese un characterId válido")
+    })
+    test('with a valid id', async() => {
+        const response = await request(app).delete('/characters/1').set('access-token', token).set('access-token', token)
+        expect(response.status).toBe(200)
+        expect(response.body.message).toBe('Personaje eliminado')
+
+        const phineas = await request(app).get('/characters/1').set('access-token', token)
+        expect(phineas.body).toBe(null)
+        expect(phineas.status).toBe(200)
     })
 })

@@ -87,8 +87,8 @@ module.exports.deleteCharacter = async(req, res, next) => {
     try {
         const { characterId } = req.params
         const deletedCharacter = await model.destroy({ where: { id: characterId } })
-        if (deletedCharacter === 0) return res.status(400).json({ "err": "Ingrese un characterId valido" })
-        res.send({ message: "Character deleted" })
+        if (deletedCharacter === 0) return res.status(400).json({ "err": "Ingrese un characterId válido" })
+        res.send({ message: "Personaje eliminado" })
     } catch (err) { res.status(400).json({ err }) }
 }
 
@@ -107,7 +107,7 @@ module.exports.updateCharacter = async(req, res, next) => {
             }
         }
         character.setVideos(movies)
-        if (characterUpdated[0] !== 0) return res.json({ message: "Character updated" })
-        res.json({ message: "You need a valid id" })
+        if (characterUpdated[0] !== 0) return res.json({ message: "Personaje actualizado" })
+        res.json({ message: "Necesitas un characterId válido" })
     } catch (err) { res.status(400).json({ err: err.message }) }
 }
