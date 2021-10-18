@@ -15,7 +15,7 @@ const { user } = require("./models/user")
 const seeds = require("./seeds")
 module.exports.connectionDB = async function() {
     try {
-        let valueForce = true
+        let valueForce = false
         require("./asociations")
         await sequelize.sync({ force: valueForce })
             .then(() => {
