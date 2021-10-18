@@ -30,7 +30,7 @@ module.exports.video = sequelize.define('videos', {
         }
     },
     creationDate: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.DATE,
         allowNull: false,
         validate: {
             notNull: {

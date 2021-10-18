@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize')
 let databaseName = './disneyServices.sqlite'
 if (process.env.NODE_ENV === 'test') databaseName = './disneyServices-test.sqlite'
-console.log(process.env.NODE_ENV === 'test')
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: databaseName,
@@ -26,10 +25,8 @@ module.exports.connectionDB = async function() {
         }
         require("./asociations")
         await sequelize.sync({ force: valueForce })
-            .then(() => {
-                console.log(`Database & tables created!`)
-            })
-        sequelize.authenticate().then((d) => { console.log("DB Connected") }).catch(console.error)
+            .then(() => {})
+        sequelize.authenticate().then((d) => {}).catch(console.error)
         if (valueForce || test) {
             await seeds()
             await gender.create({ name: "fantasia" })

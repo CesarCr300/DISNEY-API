@@ -51,3 +51,19 @@ describe('/characters', function() {
         expect(response.body[0].Nombre).toBe("Phineas")
     })
 })
+
+describe('/characters/characterId', function() {
+    test('with a incorrect id', async() => {
+        const response = await request(app).get('/characters/f').set('access-token', token)
+        expect(response.status).toBe(200)
+        expect(response.body).toBe(null)
+    })
+    test('with a correct id', async() => {
+        const response = await request(app).get('/characters/1').set('access-token', token)
+        expect(response.status).toBe(200)
+        expect(response.body.Edad).toBe(15)
+        expect(response.body.Nombre).toBe("Phineas")
+        expect(response.body.videos.length).toBe(1)
+        expect(response.body.videos[0].title).toBe("Phineas y Ferb")
+    })
+})

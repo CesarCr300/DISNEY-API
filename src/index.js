@@ -4,6 +4,4 @@ const { connectionDB } = require('./db')
 
 connectionDB()
 
-app.listen(app.get('port'), (req, res) => {
-    console.log("Listening")
-})
+app.listen(app.get('port'), (req, res) => {})
