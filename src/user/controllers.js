@@ -20,7 +20,7 @@ module.exports.register = async(req, res, next) => {
             subject: "Bienvenido a Disney Servicios",
             text: "Has creado exitasomante tu cuenta en Disney Servicios."
         }
-        await sgMail.send(messageWelcome)
+        try { await sgMail.send(messageWelcome) } catch (err) { console.log("Corrobore la cuenta sendgrid") }
         res.status(201).json({ token })
     } catch (err) {
         res.status(400).json({ err: err.message })

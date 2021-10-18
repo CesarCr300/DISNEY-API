@@ -30,15 +30,8 @@ module.exports.connectionDB = async function() {
                 console.log(`Database & tables created!`)
             })
         sequelize.authenticate().then((d) => { console.log("DB Connected") }).catch(console.error)
-        if (valueForce && test !== true) {
+        if (valueForce || test) {
             await seeds()
-            await gender.create({ name: "fantasia" })
-            await gender.create({ name: "accion" })
-            await gender.create({ name: "infantil" })
-            await gender.create({ name: "comedia" })
-            await gender.create({ name: "animacion" })
-        }
-        if (test) {
             await gender.create({ name: "fantasia" })
             await gender.create({ name: "accion" })
             await gender.create({ name: "infantil" })
