@@ -8,6 +8,7 @@ const sequelize = new Sequelize({
     define: {
         timestamps: false
     },
+    logging: false
 })
 module.exports.sequelize = sequelize
 
@@ -29,7 +30,7 @@ module.exports.connectionDB = async function() {
                 console.log(`Database & tables created!`)
             })
         sequelize.authenticate().then((d) => { console.log("DB Connected") }).catch(console.error)
-        if (valueForce) {
+        if (valueForce && test !== true) {
             await seeds()
             await gender.create({ name: "fantasia" })
             await gender.create({ name: "accion" })

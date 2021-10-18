@@ -1,7 +1,6 @@
 const request = require('supertest')
 const app = require('../src/app')
 const { connectionDB } = require('../src/db')
-
 beforeAll(async() => {
     process.env.NODE_ENV = 'test'
     await connectionDB()
