@@ -1,7 +1,10 @@
 const Sequelize = require('sequelize')
+let databaseName = './disneyServices.sqlite'
+if (process.env.NODE_ENV === 'test') databaseName = './disneyServices-test.sqlite'
+console.log(process.env.NODE_ENV === 'test')
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: './database.sqlite',
+    storage: databaseName,
     define: {
         timestamps: false
     },
@@ -16,6 +19,10 @@ const seeds = require("./seeds")
 module.exports.connectionDB = async function() {
     try {
         let valueForce = false
+        if (process.env.NODE_ENV === 'test') {
+            test = true
+            valueForce = true
+        }
         require("./asociations")
         await sequelize.sync({ force: valueForce })
             .then(() => {
@@ -24,6 +31,13 @@ module.exports.connectionDB = async function() {
         sequelize.authenticate().then((d) => { console.log("DB Connected") }).catch(console.error)
         if (valueForce) {
             await seeds()
+            await gender.create({ name: "fantasia" })
+            await gender.create({ name: "accion" })
+            await gender.create({ name: "infantil" })
+            await gender.create({ name: "comedia" })
+            await gender.create({ name: "animacion" })
+        }
+        if (test) {
             await gender.create({ name: "fantasia" })
             await gender.create({ name: "accion" })
             await gender.create({ name: "infantil" })
