@@ -110,3 +110,32 @@ describe('POST /movies', function() {
         expect(movieResponse.body.characters.length).toBe(2)
     })
 })
+
+describe('PATCH /movies/movieId', function() {
+    test('without a token', async() => {
+        const response = await request(app).patch('/movies/1')
+
+        expect(response.body.err).toBe('Necesitas un token')
+        expect(response.status).toBe(400)
+    })
+    test('with an invalid token', async() => {
+        const response = await request(app).patch('/movies/1').set('access-token', 'token')
+        expect(response.body.err).toBe('jwt malformed')
+        expect(response.status).toBe(400)
+    })
+    test('with an invalid id', async() => {
+        const response = await request(app).patch('/movies/f').set('access-token', token)
+        expect(response.status).toBe(404)
+        expect(response.body.err).toBe('Ingrese un movieId válido')
+    })
+    test('with a valid id', async() => {
+        const response = await request(app).patch('/movies/4').set('access-token', token).send({ title: 'Las aventuras renovadas de Phineas y ferb en el espacio', creationDate: '10/19/2021', calification: 5 })
+        expect(response.status).toBe(200)
+        expect(response.body.message).toBe('Movie/Serie updated')
+
+        const movieFounded = await request(app).get('/movies/4').set('access-token', token)
+        expect(movieFounded.body.title).toBe('Las aventuras renovadas de Phineas y ferb en el espacio')
+        expect(movieFounded.body.calification).toBe(5)
+        expect(movieFounded.body.characters.length).toBe(2)
+    })
+})
