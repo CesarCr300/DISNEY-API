@@ -10,9 +10,7 @@ beforeAll(async() => {
         await connectionDB()
         const userCreated = await request(app).get('/auth/register').send({ email: "user@example.com", password: "password" })
         token = userCreated.body.token
-    } catch (error) {
-        console.err
-    }
+    } catch (error) {}
 })
 
 describe('GET /movies', function() {
@@ -154,5 +152,33 @@ describe('PATCH /movies/movieId', function() {
         expect(movieFoundedById.body.title).toBe('Las aventuras renovadas de Phineas y ferb en el espacio con Micky')
         expect(movieFoundedById.body.characters.length).toBe(3)
         expect(movieFoundedById.body.characters[2].name).toBe('Micky')
+    })
+})
+
+describe('DELETE /movies/movieId', function() {
+    test('without a token', async() => {
+        const response = await request(app).delete('/movies/1')
+
+        expect(response.body.err).toBe('Necesitas un token')
+        expect(response.status).toBe(400)
+    })
+    test('with an invalid token', async() => {
+        const response = await request(app).delete('/movies/1').set('access-token', 'token')
+        expect(response.body.err).toBe('jwt malformed')
+        expect(response.status).toBe(400)
+    })
+    test('with an invalid id', async() => {
+        const response = await request(app).delete('/movies/f').set('access-token', token)
+        expect(response.status).toBe(404)
+        expect(response.body.err).toBe('Ingrese un movieId válido')
+    })
+    test('with a valid id', async() => {
+        const response = await request(app).delete('/movies/4').set('access-token', token)
+        expect(response.status).toBe(200)
+        expect(response.body.message).toBe("Movie/Serie deleted")
+
+        const movieDeleted = await request(app).get('/movies/4').set('access-token', token)
+        expect(movieDeleted.status).toBe(200)
+        expect(movieDeleted.body).toBe(null)
     })
 })
