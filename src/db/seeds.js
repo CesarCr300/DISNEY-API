@@ -1,5 +1,6 @@
 const { character } = require("./models/character")
 const { video } = require("./models/video")
+const { gender } = require("./models/gender")
 
 module.exports = async function() {
     const serie1 = await video.create({
@@ -30,4 +31,13 @@ module.exports = async function() {
         age: 19
     })
     serie2.setCharacters([micky, mini])
+
+    const fantasia = await gender.create({ name: "fantasia" })
+    const accion = await gender.create({ name: "accion" })
+    const infantil = await gender.create({ name: "infantil" })
+    const comedia = await gender.create({ name: "comedia" })
+    const animacion = await gender.create({ name: "animacion" })
+
+    serie1.setGenders([infantil, animacion])
+    serie2.setGenders([infantil, comedia, animacion])
 }

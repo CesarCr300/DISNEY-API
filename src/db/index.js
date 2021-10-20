@@ -27,15 +27,17 @@ module.exports.connectionDB = async function() {
         await sequelize.sync({ force: valueForce })
             .then(() => {})
         sequelize.authenticate().then((d) => {}).catch(console.error)
-        if (valueForce || test) {
+        if (test) {
             await seeds()
+        } else if (valueForce) {
             await gender.create({ name: "fantasia" })
             await gender.create({ name: "accion" })
             await gender.create({ name: "infantil" })
             await gender.create({ name: "comedia" })
             await gender.create({ name: "animacion" })
         }
-    } catch (err) {}
+
+    } catch (err) { console.log(err) }
 }
 
 module.exports.gender = gender

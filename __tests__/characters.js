@@ -11,7 +11,7 @@ beforeAll(async() => {
     token = userCreated.body.token
 })
 
-describe('/characters', function() {
+describe('GET /characters', function() {
     test('without a token', async() => {
         const response = await request(app).get('/characters')
         expect(response.status).toBe(400)
@@ -79,7 +79,7 @@ describe('POST /characters', function() {
     })
 })
 
-describe('/characters/characterId', function() {
+describe('GET /characters/characterId', function() {
     test('with a incorrect id', async() => {
         const response = await request(app).get('/characters/f').set('access-token', token)
         expect(response.status).toBe(200)
