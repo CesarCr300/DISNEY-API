@@ -37,8 +37,7 @@ module.exports.connectionDB = async function() {
             await gender.create({ name: "comedia" })
             await gender.create({ name: "animacion" })
         }
-
-    } catch (err) { console.log(err) }
+    } catch (err) {}
 }
 
 module.exports.gender = gender

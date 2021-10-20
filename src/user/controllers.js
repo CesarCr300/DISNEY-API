@@ -14,10 +14,10 @@ module.exports.register = async(req, res, next) => {
         const messageWelcome = {
             to: email,
             from: {
-                email: "cc30122003@gmail.com",
+                email: "cesarjcontreras30@gmail.com",
                 name: "Disney Servicios"
             },
-            subject: "Bienvenido a Disney Servicios",
+            subject: "Te damos la bienvenida a nuestra comunidad",
             text: "Has creado exitasomante tu cuenta en Disney Servicios."
         }
         try { await sgMail.send(messageWelcome) } catch (err) { console.log("Corrobore la cuenta sendgrid") }
