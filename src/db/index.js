@@ -19,6 +19,7 @@ const seeds = require("./seeds")
 module.exports.connectionDB = async function() {
     try {
         let valueForce = false
+        let test = false
         if (process.env.NODE_ENV === 'test') {
             test = true
             valueForce = true

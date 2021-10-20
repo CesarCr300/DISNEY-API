@@ -79,3 +79,34 @@ describe('GET /movies/movieId', function() {
         expect(response.body.characters.length).toBe(2)
     })
 })
+
+describe('POST /movies', function() {
+    test('without a token', async() => {
+        const response = await request(app).post('/movies')
+        expect(response.body.err).toBe('Necesitas un token')
+        expect(response.status).toBe(400)
+    })
+    test('with an invalid token', async() => {
+        const response = await request(app).post('/movies').set('access-token', 'token')
+        expect(response.body.err).toBe('jwt malformed')
+        expect(response.status).toBe(400)
+    })
+    test('without a title and without creationDate', async() => {
+        const response = await request(app).post('/movies').set('access-token', token)
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('err')
+    })
+    test('with title and creationDate and token', async() => {
+        const response = await request(app).post('/movies').set('access-token', token).send({ title: "Los malvados de nunca jamas", creationDate: "12/30/2003" })
+        expect(response.status).toBe(201)
+        expect(response.body).toHaveProperty('title')
+    })
+    test('with a character and gender', async() => {
+        const response = await request(app).post('/movies').set('access-token', token).send({ title: "Las aventuras de Phineas y Ferb en el espacio", creationDate: "12/30/2004", genders: [3, 5], characters: [1, 2] })
+        expect(response.status).toBe(201)
+
+        const movieResponse = await request(app).get('/movies/4?genre=3').set('access-token', token)
+        expect(movieResponse.status).toBe(200)
+        expect(movieResponse.body.characters.length).toBe(2)
+    })
+})
