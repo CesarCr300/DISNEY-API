@@ -142,13 +142,17 @@ describe('PATCH /movies/movieId', function() {
         expect(movieFounded.body.characters.length).toBe(2)
     })
     test('with a valid id, changing characters and gender', async() => {
-        const response = await request(app).patch('/movies/4').set('access-token', token).send({ title: 'Las aventuras renovadas de Phineas y ferb en el espacio con Micky Mouse', creationDate: '10/19/2021', calification: 5, genders: [1], characters: [1, 2, 3] })
+        const response = await request(app).patch('/movies/4').set('access-token', token).send({ title: 'Las aventuras renovadas de Phineas y ferb en el espacio con Micky', creationDate: '10/19/2021', calification: 5, characters: [1, 2, 3], genders: [1] })
         expect(response.status).toBe(200)
         expect(response.body.message).toBe('Movie/Serie updated')
-        const movieFounded = await request(app).get('/movies?genre=1').set('access-token', token)
-        console.log(movieFounded.body)
-            // expect(movieFounded.body[0].title).toBe('Las aventuras renovadas de Phineas y ferb en el espacio con Micky Mouse')
-            // expect(movieFounded.body[0].calification).toBe(5)
-            // expect(movieFounded.body[0].characters.length).toBe(2)
+
+        const movieFoundedByGender = await request(app).get('/movies?genre=1').set('access-token', token)
+        expect(movieFoundedByGender.body.length).toBe(1)
+        expect(movieFoundedByGender.body[0].Título).toBe('Las aventuras renovadas de Phineas y ferb en el espacio con Micky')
+
+        const movieFoundedById = await request(app).get('/movies/4').set('access-token', token)
+        expect(movieFoundedById.body.title).toBe('Las aventuras renovadas de Phineas y ferb en el espacio con Micky')
+        expect(movieFoundedById.body.characters.length).toBe(3)
+        expect(movieFoundedById.body.characters[2].name).toBe('Micky')
     })
 })
