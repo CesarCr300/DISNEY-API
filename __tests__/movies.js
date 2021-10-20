@@ -5,10 +5,14 @@ const { connectionDB } = require('../src/db')
 let token
 
 beforeAll(async() => {
-    process.env.NODE_ENV = 'test'
-    await connectionDB()
-    const userCreated = await request(app).get('/auth/register').send({ email: "user@example.com", password: "password" })
-    token = userCreated.body.token
+    try {
+        process.env.NODE_ENV = 'test'
+        await connectionDB()
+        const userCreated = await request(app).get('/auth/register').send({ email: "user@example.com", password: "password" })
+        token = userCreated.body.token
+    } catch (error) {
+        console.err
+    }
 })
 
 describe('GET /movies', function() {
@@ -108,5 +112,43 @@ describe('POST /movies', function() {
         const movieResponse = await request(app).get('/movies/4?genre=3').set('access-token', token)
         expect(movieResponse.status).toBe(200)
         expect(movieResponse.body.characters.length).toBe(2)
+    })
+})
+
+describe('PATCH /movies/movieId', function() {
+    test('without a token', async() => {
+        const response = await request(app).patch('/movies/1')
+
+        expect(response.body.err).toBe('Necesitas un token')
+        expect(response.status).toBe(400)
+    })
+    test('with an invalid token', async() => {
+        const response = await request(app).patch('/movies/1').set('access-token', 'token')
+        expect(response.body.err).toBe('jwt malformed')
+        expect(response.status).toBe(400)
+    })
+    test('with an invalid id', async() => {
+        const response = await request(app).patch('/movies/f').set('access-token', token)
+        expect(response.status).toBe(404)
+        expect(response.body.err).toBe('Ingrese un movieId válido')
+    })
+    test('with a valid id', async() => {
+        const response = await request(app).patch('/movies/4').set('access-token', token).send({ title: 'Las aventuras renovadas de Phineas y ferb en el espacio', creationDate: '10/19/2021', calification: 5 })
+        expect(response.status).toBe(200)
+        expect(response.body.message).toBe('Movie/Serie updated')
+        const movieFounded = await request(app).get('/movies/4').set('access-token', token)
+        expect(movieFounded.body.title).toBe('Las aventuras renovadas de Phineas y ferb en el espacio')
+        expect(movieFounded.body.calification).toBe(5)
+        expect(movieFounded.body.characters.length).toBe(2)
+    })
+    test('with a valid id, changing characters and gender', async() => {
+        const response = await request(app).patch('/movies/4').set('access-token', token).send({ title: 'Las aventuras renovadas de Phineas y ferb en el espacio con Micky Mouse', creationDate: '10/19/2021', calification: 5, genders: [1], characters: [1, 2, 3] })
+        expect(response.status).toBe(200)
+        expect(response.body.message).toBe('Movie/Serie updated')
+        const movieFounded = await request(app).get('/movies?genre=1').set('access-token', token)
+        console.log(movieFounded.body)
+            // expect(movieFounded.body[0].title).toBe('Las aventuras renovadas de Phineas y ferb en el espacio con Micky Mouse')
+            // expect(movieFounded.body[0].calification).toBe(5)
+            // expect(movieFounded.body[0].characters.length).toBe(2)
     })
 })
