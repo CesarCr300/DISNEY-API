@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { user } = require('../db')
-const { TOKEN_JWT, TOKEN_SENDGRID } = require("../config")
+const { TOKEN_JWT, TOKEN_SENDGRID, EMAIL_SENDGRID } = require("../config")
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(TOKEN_SENDGRID)
 
@@ -14,7 +14,7 @@ module.exports.register = async(req, res, next) => {
         const messageWelcome = {
             to: email,
             from: {
-                email: "cesarjcontreras30@gmail.com",
+                email: EMAIL_SENDGRID,
                 name: "Disney Servicios"
             },
             subject: "Te damos la bienvenida a nuestra comunidad",

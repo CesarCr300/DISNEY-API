@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize')
+const { exists } = require('fs')
 let databaseName = './disneyServices.sqlite'
 if (process.env.NODE_ENV === 'test') databaseName = './disneyServices-test.sqlite'
 const sequelize = new Sequelize({
@@ -24,9 +25,17 @@ module.exports.connectionDB = async function() {
             test = true
             valueForce = true
         }
+
+        //If is the first time you are starting this program, the movie genres are added.
+        exists("disneyServices.sqlite", function(exists) {
+            if (!exists) {
+                valueForce = true
+            }
+        })
         require("./asociations")
         await sequelize.sync({ force: valueForce })
             .then(() => {})
+
         sequelize.authenticate().then((d) => {}).catch(console.error)
         if (test) {
             await seeds()

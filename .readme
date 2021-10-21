@@ -1,0 +1,6 @@
+Documentation: https://documenter.getpostman.com/view/17335853/UV5XgcFe
+
+If you want run tests, type 'npm test' in the console.
+If you want run the program, type 'npm run dev' in the console.
+
+I recommend that you register before doing the test if you wanna know if the emails have been being sent, because the sendgrid account only give 100 emails per day.
